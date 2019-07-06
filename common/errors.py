@@ -7,7 +7,7 @@ OK=0
 PHONE_NUM_ERR=1001      #手机号格式错误
 SMS_SEND_ERR=1002       #发送验证码失败
 VERIFY_CODE_ERR=1003    #验证码错误
-LOGIN_REQUIRED=1004
+LOGIN_REQUIRED=1004     #未登录
 
 # 社交系统
 LIKE_ERR=2001   #喜欢失败

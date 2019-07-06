@@ -4,20 +4,19 @@ from common import errors
 from lib.http import render_json
 from user.models import User
 
-#
 class AuthMiddleware(MiddlewareMixin):
-    pass
-    # WHITE_LIST=[
-    #     'api/user/verify-phone',
-    #     'api/user/login'
-    # ]
 
-    # def process_request(self,request):
-    #     if request.path in self.WHITE_LIST:
-    #         return
-    #
-    #     uid=request.session.get('uid')
-    #     if uid is None:
-    #         return render_json(code=errors.LOGIN_REQUIRED)
+    WHITE_LIST=[
+        'api/user/verify-phone',
+        'api/user/login'
+    ]
 
-        # request.user=User.objects.get(id=uid)
+    def process_request(self,request):
+        if request.path in self.WHITE_LIST:
+            return
+
+        uid=request.session.get('uid')
+        if uid is None:
+            return render_json(code=errors.LOGIN_REQUIRED)
+
+        request.user=User.objects.get(id=uid)
