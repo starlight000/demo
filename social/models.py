@@ -1,27 +1,27 @@
-# from django.db import models
-#
-#
-# # 划过的记录
-# class Swiped(models.Model):
-#
-#     MARKS=(
-#         ('like','喜欢'),
-#         ('dislike','不喜欢'),
-#         ('superlike','超级喜欢')
-#     )
-#
-#     uid=models.IntegerField()
-#     sid=models.IntegerField()
-#     mark=models.CharField(max_length=16,choices=MARKS)
-#     created_at=models.DateField(auto_now_add=True)
-#
-#     def is_liked(self):
-#         def is_liked(cls,sid,uid):
-#             return cls.objects.filter(uid=sid,sid=uid,
-#                                       mark__in=['like','superlike'])
-#
-#     class Meta:
-#         db_table='swiped'
+from django.db import models
+
+
+# 划过的记录
+class Swiped(models.Model):
+
+    MARKS=(
+        ('like','喜欢'),
+        ('dislike','不喜欢'),
+        ('superlike','超级喜欢')
+    )
+
+    uid=models.IntegerField()
+    sid=models.IntegerField()
+    mark=models.CharField(max_length=16,choices=MARKS)    #动作
+    created_at=models.DateField(auto_now_add=True)  #记录动作是什么时候发生的
+
+    def is_liked(self):
+        def is_liked(cls,sid,uid):
+            return cls.objects.filter(uid=sid,sid=uid,
+                                      mark__in=['like','superlike'])
+
+    class Meta:
+        db_table='swiped'
 #
 #
 # class Friend(models.Model):

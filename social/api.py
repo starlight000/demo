@@ -1,27 +1,29 @@
-# from django.shortcuts import render
+from django.shortcuts import render
+
+from common import errors
+from lib.http import render_json
+from social import logic
+
 #
-# from common import errors
-# from lib.http import render_json
-# from social import logic
+def recommend(request):
+    pass
+
+    # recm_users=logic.recommend_users(request.user)
+    # users=[u.to_dict() for u in recm_users]
+    #
+    #
+    # return render_json(data=users)
+
 #
-#
-# def recommend(request):
-#
-#     recm_users=logic.recommend_users(request.user)
-#     users=[u.to_dict() for u in recm_users]
-#
-#
-#     return render_json(data=users)
-#
-#
-# def like(request):
-#     sid=request.POST.get('sid')
-#     user=request.user
-#
-#     if logic.like_someone(user.id,sid):
-#         return render_json()
-#     else:
-#         return render_json(errors.LIKE_ERR)
+def like(request):
+    pass
+    # sid=request.POST.get('sid')
+    # user=request.user
+    #
+    # if logic.like_someone(user.id,sid):
+    #     return render_json()
+    # else:
+    #     return render_json(errors.LIKE_ERR)
 #
 #
 #
