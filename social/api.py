@@ -20,14 +20,13 @@ def recommend(request):
 
 #
 def like(request):
-    pass
-    # sid=request.POST.get('sid')
-    # user=request.user
-    #
-    # if logic.like_someone(user.id,sid):
-    #     return render_json()
-    # else:
-    #     return render_json(errors.LIKE_ERR)
+
+    sid=request.POST.get('sid')
+    user=request.user
+
+    if logic.like_someone(user.id,sid):
+        return render_json()
+    return render_json(errors.LIKE_ERR)
 #
 #
 #

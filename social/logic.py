@@ -37,22 +37,22 @@ def recommend_users(user):
     return users
 #
 #
-# def like_someone(uid,sid):
-#     '''
-#     创建喜欢的人，如果对方
-#     :param uid:
-#     :param sid:
-#     :return:
-#     '''
-#     if not User.objects.filter(id=sid).exists():
-#         return False
-#
-#     Swiped.objects.create(uid=uid,sid=sid,mark='like')
-#
-#     if Swiped.objects.filter(uid=sid,sid=uid,mark__in=['like','superlike']).exists()
-#         print('+++ friend +++')
-#
-#     return True
+def like_someone(uid,sid):
+    '''
+    创建喜欢的人，如果对方
+    :param uid:
+    :param sid:
+    :return:
+    '''
+    if not User.objects.filter(id=sid).exists():
+        return False
+
+    Swiped.objects.create(uid=uid,sid=sid,mark='like')
+
+    # if Swiped.objects.filter(uid=sid,sid=uid,mark__in=['like','superlike']).exists()
+    #     print('+++ friend +++')
+
+    return True
 #
 # def superlike_someone(uid,sid):
 #     if not User.objects.filter(id=sid).exists()
