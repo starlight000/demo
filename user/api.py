@@ -1,15 +1,11 @@
-import os
 import time
-
 from django.core.cache import cache
-from django.http import JsonResponse
-from django.shortcuts import render
 from common import utils, errors, config
-from demo import settings
 from lib.http import render_json
 from user import logic
 from user.forms import ProfileForm
 from user.models import User
+from urllib.parse import urljoin
 
 
 def verify_phone(request):
@@ -93,14 +89,18 @@ def upload_avatar(request):
     avatar=request.FILES.get('avatar')
     user=request.user
 
-    filename='avatar-%s-%d'%(user.id,int(time.time()))
-    filepath=os.path.join(settings.MEDIA_ROOT,filename)
 
-    with open(filepath,'wb+')as output:
-        # 切片上传
-        for chunk in avatar.chunks():
-            output.write(chunk)
 
-    user.avatar=filename
-    user.save()
-    return render_json()
+    # filename='avatar-%s-%d'%(user.id,int(time.time()))
+    # filepath=os.path.join(settings.MEDIA_ROOT,filename)
+    #
+    # with open(filepath,'wb+')as output:
+    #     # 切片上传
+    #     for chunk in avatar.chunks():
+    #         output.write(chunk)
+
+
+    ret=logic.async_upload_avatar(user,avatar)
+    if ret:
+        return render_json()
+    return render_json(code=errors.AVATAR_UPLOAD_ERR)

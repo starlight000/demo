@@ -1,7 +1,10 @@
 from django.db import models
 
 # 会员
-class Vip(models.Model):
+from lib.orm import ModelToDicMixin
+
+
+class Vip(models.Model,ModelToDicMixin):
     name=models.CharField(max_length=32,unique=True)
     level=models.IntegerField(unique=True,default=0)
     price=models.DecimalField(max_digits=5,decimal_places=2,default=0)
@@ -35,7 +38,7 @@ class Vip(models.Model):
         db_table='vips'
 
 # 权限
-class Permission(models.Model):
+class Permission(models.Model,ModelToDicMixin):
     name=models.CharField(max_length=32,unique=True)
     description=models.TextField()
 
