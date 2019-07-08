@@ -11,3 +11,7 @@ LOGIN_REQUIRED=1004     #未登录
 
 # 社交系统
 LIKE_ERR=2001   #喜欢失败
+
+
+# vip系统
+VIP_PWEM_ERR=3001

@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'user',
-    'social'
+    'social',
+    'vip'
 ]
 
 MIDDLEWARE = [
@@ -113,3 +114,5 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT=os.path.join(BASE_DIR,'media')

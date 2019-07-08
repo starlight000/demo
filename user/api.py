@@ -1,9 +1,14 @@
+import os
+import time
+
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.shortcuts import render
 from common import utils, errors, config
+from demo import settings
 from lib.http import render_json
 from user import logic
+from user.forms import ProfileForm
 from user.models import User
 
 
@@ -58,26 +63,44 @@ def login(request):
 
 
 
-# def get_profile(request):
+def get_profile(request):
     # uid=request.GET.get('uid')
     # user=User.objects.get(id=uid)
-    #pid=request.objects.get(id=uid)
-    # profile=request.user.profile
-    # return render_json(data=profile.to_dict(exclude=[]))
+    # profile=request.objects.get(id=uid)
+
+    profile=request.user.profile
+    return render_json(data=profile.to_dict(exclude=['vibtation','only_matche','auto_play']))
 
 
 
-# def det_profile(request):
-#     user=request.user
-#     form=ProfileForm(request.POST,instance=user.profile)
-#
-#     if form.is_valid():
-#         form.save()
+def set_profile(request):
+    user=request.user
+
+    form=ProfileForm(request.POST,instance=user.profile)
+
+    if form.is_valid():
+        profile=form.save(commit=False)
+        # 手动创建一对一关系
+        profile.id=user.id
+        profile.save()
+
+        return render_json()
+    else:
+        return render_json(data=form.errors)
 
 
-# def upload_avatar(rwquest):
-#     avatar=request.FILES.get('avatar')
-#
-#     with open(filepath,'wb+')as output:
-#         for chunk in avator.chunks():
-#             output.write()
+def upload_avatar(request):
+    avatar=request.FILES.get('avatar')
+    user=request.user
+
+    filename='avatar-%s-%d'%(user.id,int(time.time()))
+    filepath=os.path.join(settings.MEDIA_ROOT,filename)
+
+    with open(filepath,'wb+')as output:
+        # 切片上传
+        for chunk in avatar.chunks():
+            output.write(chunk)
+
+    user.avatar=filename
+    user.save()
+    return render_json()

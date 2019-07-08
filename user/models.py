@@ -2,6 +2,13 @@ import datetime
 
 from django.db import models
 
+# 存放身份信息
+from django.utils.functional import cached_property
+
+
+from lib.orm import ModelToDicMixin
+from vip.models import Vip
+
 
 class User(models.Model):
     phonenum=models.CharField(max_length=11,unique=True)
@@ -13,18 +20,30 @@ class User(models.Model):
     avatar=models.CharField(max_length=256)
     location=models.CharField(max_length=64)
 
-    @property    #将方法变成属性
+    vip_id=models.IntegerField(default=1)
+
+    # @property    #将方法变成属性
+    @cached_property
     def age(self):
         today=datetime.date.today()
         birthday=datetime.date(self.birth_year,self.birth_month,self.birth_day)
         return (today-birthday).days//365
 
-    # @property
-    # def profile(self):
-    #     if not hasattr(self,'_profile')
-    #         self._profile,_=Profile.objects.get_or_create(id==self.id)
-    #
-    #     return self._profile
+    @property
+    def profile(self):
+        '''
+        user.profile.location
+        :return:
+        '''
+        if not hasattr(self,'_profile'):
+            self._profile,_=Profile.objects.get_or_create(id==self.id)
+
+        return self._profile
+
+    @property
+    def vip(self):
+        if not hasattr(self, '_vip'):
+            self._vip = Vip.objects.get(id=self.vip_id)
 
 
     def to_dict(self):
@@ -37,34 +56,41 @@ class User(models.Model):
             'age':self.age
         }
 
+
+
     class Meta:
         db_table='users'
 
+# 存放个人信息
+class Profile(models.Model,ModelToDicMixin):
+    '''
+    ModelToDicMixin 功能单一的类，一个函数只做一件事，避免多继承带来的问题
+    '''
 
-# class Profile(models.Model,ModelToDictMixin):
+    LOCATIONS={
+        ('bj','北京'),
+        ('sz','深圳'),
+        ('sh','上海'),
 
-    # LOCATIONS={
-    #     ('bj','北京'),
-    #     ('sz','深圳'),
-    #     ('sh','上海'),
+    }
+    SEXS=(
+        (0,'全部'),
+        (1,'男'),
+        (2,'女')
+    )
 
-    # }
-    # SEXS=(
-    #     (0,'全部'),
-    #     (1,'男'),
-    #     (2,'女')
-    # )
-    #
-    # location=models.CharField(max_length=64,choices=LOCATIONS)
-    # min_distance=models.IntegerField(default=1)
-    # max_distance=models.IntegerField(default=10)
-    # min_dating_age=models.IntegerField(default=18)
-    # max_dating_age=models.IntegerField(default=81)
-    # dating_sex=models.IntegerField(default=0)
-    #
-    # vibtation=models.BooleanField(default=True)
-    # only_matche=models.BooleanField(default=True)
-    # auto_play=models.BooleanField(default=True)
-    #
-    # class Meta:
-    #     db_table='profiles'
+    location=models.CharField(max_length=64,choices=LOCATIONS)
+    min_distance=models.IntegerField(default=1)
+    max_distance=models.IntegerField(default=10)
+    min_dating_age=models.IntegerField(default=18)
+    max_dating_age=models.IntegerField(default=81)
+    dating_sex=models.IntegerField(default=0,choices=SEXS)
+
+    vibtation=models.BooleanField(default=True)   #开启震动
+    only_matche=models.BooleanField(default=True)  #不让为匹配的人看我的相册
+    auto_play=models.BooleanField(default=True)    #自动播放视频
+
+
+
+    class Meta:
+        db_table='profiles'
