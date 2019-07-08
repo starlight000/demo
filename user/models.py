@@ -71,6 +71,10 @@ class Profile(models.Model,ModelToDicMixin):
         ('bj','北京'),
         ('sz','深圳'),
         ('sh','上海'),
+        ('gz','广州'),
+        ('cd','成都'),
+        ('dl','大连')
+
 
     }
     SEXS=(

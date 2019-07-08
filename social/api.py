@@ -6,13 +6,17 @@ from social import logic
 
 #
 def recommend(request):
-    pass
+    '''
+    根据当前登录用户profile筛选符合条件的用户
+    :param request:
+    :return:
+    '''
 
-    # recm_users=logic.recommend_users(request.user)
-    # users=[u.to_dict() for u in recm_users]
-    #
-    #
-    # return render_json(data=users)
+    recm_users=logic.recommend_users(request.user)
+    users=[u.to_dict() for u in recm_users]
+    print(users)
+
+    return render_json(data=users)
 
 #
 def like(request):

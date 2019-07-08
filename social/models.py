@@ -15,10 +15,10 @@ class Swiped(models.Model):
     mark=models.CharField(max_length=16,choices=MARKS)    #动作
     created_at=models.DateField(auto_now_add=True)  #记录动作是什么时候发生的
 
-    def is_liked(self):
-        def is_liked(cls,sid,uid):
-            return cls.objects.filter(uid=sid,sid=uid,
-                                      mark__in=['like','superlike'])
+    # def is_liked(self):
+    #     def is_liked(cls,sid,uid):
+    #         return cls.objects.filter(uid=sid,sid=uid,
+    #                                   mark__in=['like','superlike'])
 
     class Meta:
         db_table='swiped'
