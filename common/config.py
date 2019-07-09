@@ -3,6 +3,7 @@
 # 缓存key prefix：为工程业务增加前缀
 VERIFY_CODE_CACHE_PREFIX='verify_code:%s'
 REWIND_CACHE_PREFIX='rewind:%s'
+PROFILE_DATA_CACHE_PREFIX='profile_data:%s'
 
 
 # 云之讯短信平台配置

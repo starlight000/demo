@@ -42,12 +42,18 @@ class User(models.Model):
 
     @property
     def vip(self):
+        '''
+        用户的vip信息
+        :return:
+        '''
         if not hasattr(self, '_vip'):
             self._vip = Vip.objects.get(id=self.vip_id)
+        return self._vip
 
 
     def to_dict(self):
         return {
+            'id':self.id,
             'phonenum':self.phonenum,
             'nickname':self.nickname,
             'sex':self.sex,
@@ -71,6 +77,10 @@ class Profile(models.Model,ModelToDicMixin):
         ('bj','北京'),
         ('sz','深圳'),
         ('sh','上海'),
+        ('gz','广州'),
+        ('cd','成都'),
+        ('dl','大连')
+
 
     }
     SEXS=(

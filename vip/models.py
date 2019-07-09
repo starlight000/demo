@@ -1,9 +1,8 @@
 from django.db import models
-
-# 会员
 from lib.orm import ModelToDicMixin
 
 
+# 会员
 class Vip(models.Model,ModelToDicMixin):
     name=models.CharField(max_length=32,unique=True)
     level=models.IntegerField(unique=True,default=0)
@@ -13,12 +12,14 @@ class Vip(models.Model,ModelToDicMixin):
     @property
     def perms(self):
         if not hasattr(self,'_perms'):
+            # 通过vip权限关系表获得vip对应的权限id
             vip_perms = VipPermission.objects.filter(vip_id=self.id).only('perm_id')
             perm_id_list = [p.perm_id for p in vip_perms]
+            # 通过权限id获得权限
             perms = Permission.objects.filter(id__in=perm_id_list).only('name')
             self._perms=perms
 
-        return self.perms
+        return self._perms
 
 
     def has_perm(self,perm_name):
@@ -37,7 +38,7 @@ class Vip(models.Model,ModelToDicMixin):
     class Meta:
         db_table='vips'
 
-# 权限
+# 权限：检查权限使用装饰器
 class Permission(models.Model,ModelToDicMixin):
     name=models.CharField(max_length=32,unique=True)
     description=models.TextField()
