@@ -64,9 +64,20 @@ def get_profile(request):
     # user=User.objects.get(id=uid)
     # profile=request.objects.get(id=uid)
 
-    profile=request.user.profile
-    return render_json(data=profile.to_dict(exclude=['vibtation','only_matche','auto_play']))
+    user=request.user
+    # 1.先从缓存中获取profile_data
+    key=config.PROFILE_DATA_CACHE_PREFIX %user.id
+    profile_data=cache.get(key)
 
+    # 2.如果缓存中没有，则从数据库获取
+    if profile_data is None:
+        profile=user.profile
+        profile_data=profile.to_dict(exclude=['vibtation','only_matche','auto_play'])
+        # logger.debug('get from DB')
+
+    # 3.将profile_data存储到缓存
+        cache.set(key,profile_data)
+    return render_json(data=profile_data)
 
 
 def set_profile(request):
@@ -103,4 +114,4 @@ def upload_avatar(request):
     ret=logic.async_upload_avatar(user,avatar)
     if ret:
         return render_json()
-    return render_json(code=errors.AVATAR_UPLOAD_ERR)
+    return render_json(code=errors.AVatarUploadError.code)

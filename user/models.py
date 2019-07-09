@@ -42,8 +42,13 @@ class User(models.Model):
 
     @property
     def vip(self):
+        '''
+        用户的vip信息
+        :return:
+        '''
         if not hasattr(self, '_vip'):
             self._vip = Vip.objects.get(id=self.vip_id)
+        return self._vip
 
 
     def to_dict(self):

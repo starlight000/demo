@@ -44,7 +44,8 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'common.middleware.AuthMiddleware'
+    'common.middleware.AuthMiddleware',
+    'common.middleware.LogicExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'demo.urls'

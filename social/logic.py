@@ -1,8 +1,11 @@
 # 将views里面重复的代码写到logic中
 
 import datetime
+
+from django.core.cache import cache
+
 from common import config, errors
-from social.models import Swiped
+from social.models import Swiped, Friend
 from user.models import User
 
 
@@ -45,44 +48,67 @@ def like_someone(uid,sid):
     :return:
     '''
     if not User.objects.filter(id=sid).exists():
+        raise errors.SidError
+
+    # 创建滑动记录
+    # Swiped.objects.create(uid=uid,sid=sid,mark='like')
+    ret=Swiped.swipe(uid=uid,sid=sid,mark='like')
+    # 如果被滑动的人喜欢过我，则建立好友关系
+    if ret and Swiped.is_liked(sid,uid):
+        Friend.make_friends(uid,sid)
+
+    return ret
+
+#
+def superlike_someone(uid,sid):
+    if not User.objects.filter(id=sid).exists():
         return False
 
-    Swiped.objects.create(uid=uid,sid=sid,mark='like')
+    # 创建滑动记录
+    # Swiped.objects.create(uid=uid, sid=sid, mark='superlike')
+    ret=Swiped.swipe(uid=uid,sid=sid,mark='superlike')
 
-    # if Swiped.objects.filter(uid=sid,sid=uid,mark__in=['like','superlike']).exists()
-    #     print('+++ friend +++')
+    # 只有正确滑动的记录
+    # 如果被滑动的人喜欢过我，则建立好友关系
+    if ret and Swiped.is_liked(sid, uid):
+        # Friend.make_friends(uid, sid)
+        Friend.objects.make_friends(uid,sid)
+        #TODO：向
+        return True
 
-    return True
+    return False
+    #
 #
-# def superlike_someone(uid,sid):
-#     if not User.objects.filter(id=sid).exists()
-#         pass
-#
-#
-# def rewind(user):
-#     '''
-#     撤销当前登录用户的上一次滑动操作
-#     每天只能撤销操作三次
-#     :param user:
-#     :return:
-#     '''
-#     key=config.REWIND_CACHE_PREFIX %user.id
-#
-#     rewind_times=cache.get(key,0)
-#
-#     if rewind_times>=config.REWIND_TIMES:
-#         raise errors.RewindLimitError
-#
-#     swipe=Swiped.objects.filter(uid=user.id).latest('created_at')
-#
-#     if swipe.mark in ['like','superlike']:
-#         Friend.cancel_friends(user.id,swipe.sid)
-#
-#     swipe.delete()
-#
-#     now=datetime.datetime.now()
-#     timeout=86400-now.hour*3600-now.minute*60-now.second
-#     cache.set(key,rewind_times+1,timeout=timeout)
-#
-#
-#
+def rewind(user):
+    '''
+    撤销当前登录用户的上一次滑动操作
+    每天只能撤销操作三次
+    :param user:
+    :return:
+    '''
+    key=config.REWIND_CACHE_PREFIX %user.id
+
+    rewind_times=cache.get(key,0)
+
+    if rewind_times>=config.REWIND_TIMES:
+        raise errors.RewindLimitError
+
+    swipe=Swiped.objects.filter(uid=user.id).latest('created_at')
+
+    if swipe.mark in ['like','superlike']:
+        Friend.cancel_friends(user.id,swipe.sid)
+
+    swipe.delete()
+
+    now=datetime.datetime.now()
+    timeout=86400-now.hour*3600-now.minute*60-now.second
+    cache.set(key,rewind_times+1,timeout=timeout)
+
+
+def liked_me(user):
+    swipe_list=Swiped.objects.filter(sid=user.id,mark__in=['like','superlike'])
+    # 过滤掉已经加为好友的用户
+    # TODO:获得好友列表
+
+    liked_me_uids=[s.uid for s in swipe_list]
+    return liked_me_uids

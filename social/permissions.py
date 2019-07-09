@@ -13,6 +13,6 @@ def has_perm(perm_name):
             if user.vip.has_perm(perm_name):
                 return view_func(request,*args,**kwargs)
             else:
-                raise errors.VIP_PWEM_ERR
+                raise errors.ViPPerMError
         return wapper
     return decorator
